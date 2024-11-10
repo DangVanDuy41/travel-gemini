@@ -1,5 +1,10 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface Trip {
     travelPlan: TravelPlan;
+    userId:string;
+    id:string;
+    created?: Timestamp
 }
 export interface TravelPlan {
     location: string;

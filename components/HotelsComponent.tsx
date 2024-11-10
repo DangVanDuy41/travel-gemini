@@ -15,7 +15,7 @@ const HotelsComponent = ({ hotels }: Props) => {
                         <View className='p-2'>
                             <Text numberOfLines={1} className='font-bold text-lg'>{hotel.hotelName}</Text>
                             <Text numberOfLines={2} className='h-[40]'>{hotel.description}</Text>
-                            <Text>📍  {hotel.address}</Text>
+                            <Text numberOfLines={2}>📍  {hotel.address}</Text>
                             <View className='flex-row justify-between'>
                                 <Text className='font-bold'>🏷️  {hotel.pricePerNight}</Text>
                                 <Text className='font-bold'>⭐  {hotel.rating}</Text>

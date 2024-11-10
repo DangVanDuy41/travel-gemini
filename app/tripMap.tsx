@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Alert, BackHandler } from 'react-native'
+import { StyleSheet, Alert, BackHandler } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import MapView, { Marker } from 'react-native-maps'
 import * as Location from 'expo-location';
@@ -12,6 +12,8 @@ interface LocationWithTitle {
 }
 
 const TripMap = () => {
+    
+    console.log('qweqwe')
     const { tripResult } = useTripContext();
     function getAllGeoCoordinates(): LocationWithTitle[] {
         const geoCoordinatesArray: LocationWithTitle[] = [];
@@ -59,14 +61,14 @@ const TripMap = () => {
                         [
                             {
                                 text: 'OK',
-                                onPress: () => BackHandler.exitApp(), // Thoát ứng dụng nếu không có quyền
+                                onPress: () => BackHandler.exitApp(),
                             },
                         ],
                         { cancelable: false }
                     );
                 } else {
                     console.log('Location permissions granted');
-                    // Tiếp tục thực hiện các hành động cần thiết nếu quyền đã được cấp
+                   
                 }
             } catch (error) {
                 console.error('Error requesting location permissions:', error);
@@ -79,8 +81,7 @@ const TripMap = () => {
     return (
         <SafeAreaView className='flex-1'>
             <MapView
-                style={styles.map}
-                provider={'google'}
+                style={styles.map}             
                 showsUserLocation
                 showsMyLocationButton
             >

@@ -4,7 +4,7 @@ import { Transportation } from '@/types/Trip'
 import { styled } from 'nativewind'
 
 interface Props {
-    transportation: Transportation
+    transportation: Transportation 
 }
 
 const Transport = ({ transportation }: Props) => {
