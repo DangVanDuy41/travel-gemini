@@ -21,9 +21,7 @@ const CreateTrip = () => {
   const [activeBudget, setActiveBudget] = useState<number>(1);
   const [startDay, setStartDay] = useState<Moment | null>(null);
   const [endDay, setEndDay] = useState<Moment | null>(null);
-  const [locationText, setLocationText] = useState<string>('');
-  const debouncedSearchText = useDebounce(locationText, 300);
-
+ 
 
   const handleBudget = (index: number, value: string) => {
     setActiveBudget(index);
@@ -37,12 +35,7 @@ const CreateTrip = () => {
     }
   }
 
-  const handleLocation = async () => {
-    if (debouncedSearchText) {
-      const data = await getLocation(debouncedSearchText);
-      console.log(data);
-    }
-  };
+ 
 
   useEffect(() => {
     if (endDay && startDay) {
@@ -55,11 +48,7 @@ const CreateTrip = () => {
   const handleChooseLocation = (text: string) => {
     setTripData(prev => ({ ...prev, location: text }))
   }
-  useEffect(() => {
-    if (debouncedSearchText) {
-      handleLocation();
-    }
-  }, [debouncedSearchText]);
+  
 
   return (
     <SafeAreaView className='flex-1'>

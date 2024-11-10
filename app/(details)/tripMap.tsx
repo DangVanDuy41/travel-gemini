@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react'
 import MapView, { Marker } from 'react-native-maps'
 import * as Location from 'expo-location';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { GeoCoordinates } from '@/types/Trip';
-import { useTripContext } from '@/utils/useTripContext';
+import { GeoCoordinates, Trip } from '@/types/Trip';
+import { useLocalSearchParams } from 'expo-router';
 
 interface LocationWithTitle {
     geoCoordinates: GeoCoordinates;
@@ -12,32 +12,34 @@ interface LocationWithTitle {
 }
 
 const TripMap = () => {
-    
-    console.log('qweqwe')
-    const { tripResult } = useTripContext();
+
+    const { userTrip } = useLocalSearchParams();
+    const tripData: Trip = JSON.parse(decodeURIComponent(Array.isArray(userTrip) ? userTrip[0] : userTrip));
+
+
     function getAllGeoCoordinates(): LocationWithTitle[] {
         const geoCoordinatesArray: LocationWithTitle[] = [];
 
-      
+
         geoCoordinatesArray.push({
-            geoCoordinates: tripResult.travelPlan.geoCoordinates,
-            title: tripResult.travelPlan.location 
+            geoCoordinates: tripData.travelPlan.geoCoordinates,
+            title: tripData.travelPlan.location
         });
 
-        
-        tripResult.travelPlan.hotels.forEach(hotel => {
+
+        tripData.travelPlan.hotels.forEach(hotel => {
             geoCoordinatesArray.push({
                 geoCoordinates: hotel.geoCoordinates,
-                title: hotel.hotelName 
+                title: hotel.hotelName
             });
         });
 
-      
-        tripResult.travelPlan.dailyItinerary.forEach(itinerary => {
+
+        tripData.travelPlan.dailyItinerary.forEach(itinerary => {
             itinerary.activitie.forEach(activity => {
                 geoCoordinatesArray.push({
                     geoCoordinates: activity.geoCoordinates,
-                    title: activity.activity 
+                    title: activity.activity
                 });
             });
         });
@@ -47,7 +49,7 @@ const TripMap = () => {
     const [mapMarker, setMapMarker] = useState<LocationWithTitle[]>([]);
     useEffect(() => {
         const coordinates = getAllGeoCoordinates();
-        console.log(coordinates);
+        
         setMapMarker([...coordinates])
     }, [])
     useEffect(() => {
@@ -68,7 +70,7 @@ const TripMap = () => {
                     );
                 } else {
                     console.log('Location permissions granted');
-                   
+
                 }
             } catch (error) {
                 console.error('Error requesting location permissions:', error);
@@ -81,7 +83,7 @@ const TripMap = () => {
     return (
         <SafeAreaView className='flex-1'>
             <MapView
-                style={styles.map}             
+                style={styles.map}
                 showsUserLocation
                 showsMyLocationButton
             >

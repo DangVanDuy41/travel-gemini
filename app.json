@@ -13,7 +13,10 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need your location to show it on the map"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +29,7 @@
       "output": "static",
       "favicon": ""
     },
-    "plugins": ["expo-router"],
+    "plugins": ["expo-router", "expo-location"],
     "experiments": {
       "typedRoutes": true
     }

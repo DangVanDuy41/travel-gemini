@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
-import { router, Stack, useLocalSearchParams } from 'expo-router'
+import { Href, router, Stack, useLocalSearchParams } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import Transport from '@/components/Transportation'
 import { initialTrip } from '@/data/tripInitial'
@@ -13,6 +13,7 @@ import { db } from '@/utils/FireBaseConfig'
 
 
 const MyTrip = () => {
+
     const [userTrip, setUserTrip] = useState<Trip | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -24,7 +25,6 @@ const MyTrip = () => {
         try {
             const q = query(collection(db, "UserTrips"), where("id", "==", id));
             const querySnapshot = await getDocs(q);
-
             querySnapshot.forEach((doc) => {
                 setUserTrip({ ...doc.data() as Trip });
             });
@@ -55,7 +55,7 @@ const MyTrip = () => {
                         <Ionicons name='backspace-outline' size={30} />
 
                     </TouchableOpacity>
-                )
+                ),
             }} />
             {loading || !userTrip ? (<View className="flex-1 justify-center items-center">
                 <ActivityIndicator size="large" color="black" />
@@ -82,7 +82,7 @@ const MyTrip = () => {
                         <View className='p-3'>
                             <TouchableOpacity
                                 className='w-full p-3 bg-black rounded-xl'
-                                onPress={() => router.push('/')}
+                                onPress={() => router.push(`/(details)/tripMap?userTrip=${encodeURIComponent(JSON.stringify(userTrip))}` as Href)}
                             >
                                 <Text className='text-white  text-center text-xl'>Xem bản đồ</Text>
                             </TouchableOpacity>

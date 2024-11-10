@@ -39,8 +39,8 @@ const InitialLayout = () => {
         <Stack>
             <Stack.Screen name='index' options={{ headerShown: false }} />
             <Stack.Screen name='(details)/[id]' />
-            <Stack.Screen name ='(modal)/login' options={{ headerShown: false }}/>
-            <Stack.Screen name='tripMap' options={{ headerShown: false }} />
+            <Stack.Screen name='(details)/tripMap' options={{ headerShown: false }} />
+            <Stack.Screen name ='(modal)/login' options={{ headerShown: false }}/>  
             <Stack.Screen name='createTrip' options={{headerTitle:"Tạo lịch trình" }} />
             <Stack.Screen name='oauth-native-callback' options={{ headerShown: false }} />
         </Stack>
