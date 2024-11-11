@@ -2,13 +2,13 @@ import { View, Text, TouchableOpacity, Image, Dimensions, ScrollView, ActivityIn
 import React, { useEffect, useState } from 'react'
 
 import { Href, router, Stack, useLocalSearchParams } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
+import { AntDesign, Ionicons } from '@expo/vector-icons'
 import Transport from '@/components/Transportation'
 import { initialTrip } from '@/data/tripInitial'
 import HotelsComponent from '@/components/HotelsComponent'
 import Plandays from '@/components/Plandays'
 import { Trip } from '@/types/Trip'
-import { collection, getDocs, query, where } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore'
 import { db } from '@/utils/FireBaseConfig'
 
 
@@ -40,6 +40,11 @@ const MyTrip = () => {
         getUserTrips();
     }, [])
 
+    const handleDelete = async (id: string) => {
+        const docRef = doc(db, "UserTrips", id);
+        await deleteDoc(docRef);
+        router.push('/')
+    }
     const handleBack = () => {
         setUserTrip(initialTrip)
         router.back();
@@ -56,6 +61,11 @@ const MyTrip = () => {
 
                     </TouchableOpacity>
                 ),
+                headerRight: () => (
+                    <TouchableOpacity className='p-2 rounded-full bg-black' onPress={() => handleDelete(id)}>
+                        <AntDesign name="delete" size={24} color="white" />
+                    </TouchableOpacity>
+                )
             }} />
             {loading || !userTrip ? (<View className="flex-1 justify-center items-center">
                 <ActivityIndicator size="large" color="black" />

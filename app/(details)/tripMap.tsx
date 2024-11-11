@@ -1,8 +1,7 @@
-import { StyleSheet, Alert, BackHandler } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import MapView, { Marker } from 'react-native-maps'
+import { StyleSheet, Alert, BackHandler, View, Linking } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { GeoCoordinates, Trip } from '@/types/Trip';
 import { useLocalSearchParams } from 'expo-router';
 
@@ -12,29 +11,21 @@ interface LocationWithTitle {
 }
 
 const TripMap = () => {
-
     const { userTrip } = useLocalSearchParams();
     const tripData: Trip = JSON.parse(decodeURIComponent(Array.isArray(userTrip) ? userTrip[0] : userTrip));
-
-
+    
     function getAllGeoCoordinates(): LocationWithTitle[] {
         const geoCoordinatesArray: LocationWithTitle[] = [];
-
-
         geoCoordinatesArray.push({
             geoCoordinates: tripData.travelPlan.geoCoordinates,
             title: tripData.travelPlan.location
         });
-
-
         tripData.travelPlan.hotels.forEach(hotel => {
             geoCoordinatesArray.push({
                 geoCoordinates: hotel.geoCoordinates,
                 title: hotel.hotelName
             });
         });
-
-
         tripData.travelPlan.dailyItinerary.forEach(itinerary => {
             itinerary.activitie.forEach(activity => {
                 geoCoordinatesArray.push({
@@ -43,64 +34,68 @@ const TripMap = () => {
                 });
             });
         });
-
         return geoCoordinatesArray;
     }
+
     const [mapMarker, setMapMarker] = useState<LocationWithTitle[]>([]);
+    const [locationGranted, setLocationGranted] = useState<boolean | null>(null);
+
     useEffect(() => {
         const coordinates = getAllGeoCoordinates();
-        
-        setMapMarker([...coordinates])
-    }, [])
+        setMapMarker([...coordinates]);
+    }, []);
+
     useEffect(() => {
-        const getPermissions = async () => {
-            try {
-                let { status } = await Location.requestForegroundPermissionsAsync();
-                if (status !== 'granted') {
+        const checkLocationPermission = async () => {
+            let { status } = await Location.getForegroundPermissionsAsync();
+            if (status === 'granted') {
+                setLocationGranted(true);
+            } else {
+                let { status: requestStatus } = await Location.requestForegroundPermissionsAsync();
+                if (requestStatus === 'granted') {
+                    setLocationGranted(true);
+                } else {
+                    setLocationGranted(false);
                     Alert.alert(
                         'Permission Required',
-                        'App needs access to your location to function properly. Please grant location permissions.',
+                        'App needs access to your location. Please grant location permission in settings.',
                         [
-                            {
-                                text: 'OK',
-                                onPress: () => BackHandler.exitApp(),
-                            },
+                            { text: 'Open Settings', onPress: () =>  Linking.openSettings() },
+                            { text: 'Cancel', style: 'cancel', onPress: () => BackHandler.exitApp() },
                         ],
                         { cancelable: false }
                     );
-                } else {
-                    console.log('Location permissions granted');
-
                 }
-            } catch (error) {
-                console.error('Error requesting location permissions:', error);
             }
         };
 
-        getPermissions();
+        checkLocationPermission();
     }, []);
 
     return (
-        <SafeAreaView className='flex-1'>
-            <MapView
-                style={styles.map}
-                showsUserLocation
-                showsMyLocationButton
-            >
-                {mapMarker.map((item, index) => (
-                    <Marker key={index}
-                        coordinate={{
-                            latitude: item.geoCoordinates.latitude,
-                            longitude: item.geoCoordinates.longitude
-                        }}
-                        title={item.title}
-                    >
-                    </Marker>
-                ))}
-            </MapView>
-        </SafeAreaView>
-    )
-}
+        <View style={styles.container}>
+            {locationGranted && (
+                <MapView
+                    style={styles.map}
+                    showsUserLocation
+                    showsMyLocationButton
+                >
+                    {mapMarker.map((item, index) => (
+                        <Marker
+                            key={index}
+                            coordinate={{
+                                latitude: item.geoCoordinates.latitude,
+                                longitude: item.geoCoordinates.longitude,
+                            }}
+                            title={item.title}
+                        />
+                    ))}
+                </MapView>
+            )}
+        </View>
+    );
+};
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -110,4 +105,5 @@ const styles = StyleSheet.create({
         height: '100%',
     },
 });
-export default TripMap
+
+export default TripMap;

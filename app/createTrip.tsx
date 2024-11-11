@@ -107,6 +107,7 @@ const CreateTrip = () => {
                 onDateChange={(date, type) => handleDays(date, type)}
                 allowRangeSelection={true}
                 minDate={new Date()}
+                maxRangeDuration={7}
                 selectedRangeStyle={{
                   backgroundColor: 'black',
                 }}

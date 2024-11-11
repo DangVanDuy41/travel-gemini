@@ -5,6 +5,8 @@ import TripProvider from '@/utils/TripContext'
 import * as SecureStore from 'expo-secure-store';
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { router, Stack } from 'expo-router';
+import { AntDesign } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native';
 
 
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
@@ -28,7 +30,7 @@ const tokenCache = {
 const InitialLayout = () => {
 
     const { isSignedIn, isLoaded } = useAuth();
-    
+
     useEffect(() => {
         if (isLoaded && !isSignedIn) {
             router.replace(`/(modal)/login`)
@@ -39,9 +41,14 @@ const InitialLayout = () => {
         <Stack>
             <Stack.Screen name='index' options={{ headerShown: false }} />
             <Stack.Screen name='(details)/[id]' />
-            <Stack.Screen name='(details)/tripMap' options={{ headerShown: false }} />
-            <Stack.Screen name ='(modal)/login' options={{ headerShown: false }}/>  
-            <Stack.Screen name='createTrip' options={{headerTitle:"Tạo lịch trình" }} />
+            <Stack.Screen name='(details)/tripMap'
+                options={{             
+                    title: "Xem bản đồ",
+                   
+                }}
+            />
+            <Stack.Screen name='(modal)/login' options={{ headerShown: false }} />
+            <Stack.Screen name='createTrip' options={{ headerTitle: "Tạo lịch trình" }} />
             <Stack.Screen name='oauth-native-callback' options={{ headerShown: false }} />
         </Stack>
     )

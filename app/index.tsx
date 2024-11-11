@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ActivityIndicator, ScrollView, RefreshControl, Image } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Entypo } from '@expo/vector-icons';
 
@@ -11,7 +11,7 @@ import TripComponent from '@/components/TripComponent';
 
 import Header from '@/components/Header';
 import InputFilter from '@/components/InputFilter';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 
 
 const Index = () => {
@@ -49,33 +49,47 @@ const Index = () => {
     const handleFilter = (trips: Trip[]) => {
         setFilteredTrips(trips);
     }
-
-    useEffect(() => {
-        if (userId) getUserTrips();
-    }, [userId]);
-
+    
+    useFocusEffect(
+        useCallback(() => {
+            if (userId) {
+                getUserTrips();
+            }
+        }, [userId]) 
+    );
     return (
         <SafeAreaView className="flex-1 bg-white">
             <Header />
-            
+
             <InputFilter handleFilter={handleFilter} trips={allTrips} />
             {loading ? (
                 <View className="flex-1 justify-center items-center">
                     <ActivityIndicator size="large" color="black" />
                 </View>
             ) : filteredTrips.length === 0 ? (
-                <View className="mt-32 items-center">
-                    <Entypo name="location" size={60} color="black" />
-                    <Text className="text-2xl font-medium my-3">Chưa có chuyến đi nào</Text>
-                    <Text className="w-[300] text-center text-base">
-                        Có vẻ như đã đến lúc lên kế hoạch cho những trải nghiệm du lịch mới! Bắt đầu bên dưới
-                    </Text>
-                    <TouchableOpacity
-                        className="py-4 mx-auto bg-black w-[150] rounded-lg mt-10"
-                    >
-                        <Text className="text-white text-base text-center font-medium">Tạo lịch trình</Text>
-                    </TouchableOpacity>
-                </View>
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={handleRefresh}
+                        />
+                    }
+                >
+                    <View className="mt-32 items-center">
+                        <Entypo name="location" size={60} color="black" />
+                        <Text className="text-2xl font-medium my-3">Chưa có chuyến đi nào</Text>
+                        <Text className="w-[300] text-center text-base">
+                            Có vẻ như đã đến lúc lên kế hoạch cho những trải nghiệm du lịch mới! Bắt đầu bên dưới
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() => router.push('/createTrip')}
+                            className="py-4 mx-auto bg-black w-[150] rounded-lg mt-10"
+                        >
+                            <Text className="text-white text-base text-center font-medium">Tạo lịch trình</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                </ScrollView>
             ) : (
                 <View className='flex-1 px-3'>
                     <ScrollView
